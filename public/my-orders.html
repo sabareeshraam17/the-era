@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Orders — THE ERA</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.track-hero{background:#f4f4f4;border-radius:24px;padding:42px;margin-bottom:24px}
+.track-hero h1{font-size:clamp(42px,7vw,72px);letter-spacing:-.06em;line-height:.9;margin:8px 0 15px}
+.track-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px;align-items:start}
+.track-card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:22px}
+.track-form .field{margin-bottom:14px}.track-form input{width:100%;padding:13px 14px;border:1px solid #ccc;border-radius:10px}
+.track-help{font-size:12px;color:#777;line-height:1.6;margin-top:12px}
+.track-results{display:grid;gap:16px}
+.order-card{border:1px solid #ddd;border-radius:18px;padding:22px;background:#fff}
+.order-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:18px}
+.order-id{font-weight:950;letter-spacing:.08em}.order-date{font-size:12px;color:#777;margin-top:5px}
+.track-status{padding:7px 10px;border-radius:999px;background:#111;color:#fff;font-size:11px;font-weight:900;letter-spacing:.07em}
+.status-line{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0 24px}
+.status-step{text-align:center;font-size:10px;font-weight:800;color:#999;text-transform:uppercase;letter-spacing:.08em}
+.status-dot{width:12px;height:12px;border-radius:50%;background:#d7d7d7;margin:0 auto 8px;position:relative;z-index:2}
+.status-step.active{color:#111}.status-step.active .status-dot{background:#111}
+.status-line:before{content:"";position:absolute;height:2px;background:#ddd;left:11%;right:11%;top:5px}
+.items{border-top:1px solid #eee;margin-top:6px}
+.item-row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #eee;font-size:13px}
+.item-row span:last-child{font-weight:850}.order-total{display:flex;justify-content:space-between;font-size:18px;font-weight:950;padding-top:14px}
+.error-box{background:#f7e8e8;color:#8a1e1e;padding:12px 14px;border-radius:10px;margin-bottom:14px;font-size:13px}
+.empty-orders{padding:32px;text-align:center;color:#777;border:1px dashed #ccc;border-radius:15px}
+@media(max-width:850px){.track-grid{grid-template-columns:1fr}.status-line{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="index.html">THE ERA</a>
+    <nav class="nav-links">
+      <a href="index.html#shop">Shop</a>
+      <a href="era.html">The Era</a>
+      <a href="order.html">Checkout</a>
+      <a href="my-orders.html">My Orders</a>
+    </nav>
+    <a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a>
+  </div>
+</header>
+
+<main class="page container">
+  <section class="track-hero">
+    <div class="kicker">THE ERA / CUSTOMER</div>
+    <h1>My orders.</h1>
+    <p style="max-width:650px;color:#666;line-height:1.7;margin:0">
+      Check your current order status, items and payment details. Use the same email and phone number you entered at checkout.
+    </p>
+  </section>
+
+  <div class="track-grid">
+    <section class="track-card">
+      <div class="kicker">Order lookup</div>
+      <h2 style="font-size:28px;letter-spacing:-.03em;margin:8px 0 18px">Find your order</h2>
+      <form class="track-form" id="trackForm">
+        <div class="field">
+          <label>Email</label>
+          <input id="email" type="email" required placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input id="phone" required placeholder="+91 9876543210">
+        </div>
+        <div class="field">
+          <label>Order ID <span style="font-weight:500;color:#777">(optional)</span></label>
+          <input id="orderId" placeholder="ERA12345678">
+        </div>
+        <button class="btn full" type="submit">Check orders</button>
+      </form>
+      <div class="track-help">
+        Enter only your email and phone to see all matching orders, or add a specific order ID to track one order.
+      </div>
+    </section>
+
+    <section>
+      <div id="message"></div>
+      <div id="results" class="track-results"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 THE ERA</span>
+    <span>Men's casualwear · Old money × streetwear</span>
+  </div>
+</footer>
+<div class="toast"></div>
+<script src="script.js"></script>
+<script>
+const statuses=["NEW","CONFIRMED","SHIPPED","DELIVERED"];
+const labels={NEW:"Order placed",CONFIRMED:"Confirmed",SHIPPED:"Shipped",DELIVERED:"Delivered",CANCELLED:"Cancelled"};
+const statusIndex={NEW:0,CONFIRMED:1,SHIPPED:2,DELIVERED:3};
+
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+
+function renderOrders(orders){
+  const box=document.getElementById("results");
+  box.innerHTML=orders.map(o=>{
+    const index=statusIndex[o.status] ?? -1;
+    const steps = o.status==="CANCELLED"
+      ? `<div class="status-line" style="grid-template-columns:1fr"><div class="status-step active"><div class="status-dot"></div>Cancelled</div></div>`
+      : `<div class="status-line">${statuses.map((s,i)=>`<div class="status-step ${i<=index?"active":""}"><div class="status-dot"></div>${labels[s]}</div>`).join("")}</div>`;
+    const items=(o.items||[]).map(i=>`<div class="item-row"><span>${i.name} × ${i.qty}</span><span>${money(i.price*i.qty)}</span></div>`).join("");
+    return `<article class="order-card">
+      <div class="order-head">
+        <div><div class="order-id">${o.orderId}</div><div class="order-date">Placed ${new Date(o.createdAt).toLocaleString("en-IN")}</div></div>
+        <div class="track-status">${labels[o.status]||o.status}</div>
+      </div>
+      ${steps}
+      <div class="items">${items}</div>
+      <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:15px;font-size:12px;color:#666">
+        <span>Payment: <strong>${o.payment==="cod"?"Cash on Delivery":"UPI"}</strong></span>
+        ${o.payment==="upi"&&o.upiId?`<span>UPI: <strong>${o.upiId}</strong></span>`:""}
+      </div>
+    </article>`;
+  }).join("");
+}
+
+document.getElementById("trackForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const message=document.getElementById("message");
+  const results=document.getElementById("results");
+  message.innerHTML="";
+  results.innerHTML='<div class="empty-orders">Checking your orders…</div>';
+
+  const email=document.getElementById("email").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const orderId=document.getElementById("orderId").value.trim();
+  const q=new URLSearchParams({email,phone});
+  if(orderId)q.set("orderId",orderId);
+
+  try{
+    const r=await fetch("/api/track-order?"+q.toString());
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||"Unable to find orders.");
+    renderOrders(data.orders);
+  }catch(err){
+    results.innerHTML="";
+    message.innerHTML=`<div class="error-box">${err.message}</div>`;
+  }
+});
+</script>
+</body>
+</html>
