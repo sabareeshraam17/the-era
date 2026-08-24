@@ -106,7 +106,7 @@ function renderOrders(orders){
     const steps = o.status==="CANCELLED"
       ? `<div class="status-line" style="grid-template-columns:1fr"><div class="status-step active"><div class="status-dot"></div>Cancelled</div></div>`
       : `<div class="status-line">${statuses.map((s,i)=>`<div class="status-step ${i<=index?"active":""}"><div class="status-dot"></div>${labels[s]}</div>`).join("")}</div>`;
-    const items=(o.items||[]).map(i=>`<div class="item-row"><span>${i.name} × ${i.qty}</span><span>${money(i.price*i.qty)}</span></div>`).join("");
+    const items=(o.items||[]).map(i=>`<div class="item-row"><span>${i.name} × ${i.qty}<small style="display:block;color:#777;margin-top:3px">${i.size?`Size: ${i.size}`:""}${i.size&&i.color?" · ":""}${i.color?`Colour: ${i.color}`:""}</small></span><span>${money(i.price*i.qty)}</span></div>`).join("");
     return `<article class="order-card">
       <div class="order-head">
         <div><div class="order-id">${o.orderId}</div><div class="order-date">Placed ${new Date(o.createdAt).toLocaleString("en-IN")}</div></div>
