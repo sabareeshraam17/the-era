@@ -1,6 +1,6 @@
 
-const { ensureSchema } = require("../../_lib/db");
-const { isAuthed } = require("../../_lib/auth");
+const { ensureSchema } = require("../../../_lib/db");
+const { isAuthed } = require("../../../_lib/auth");
 
 module.exports = async (req, res) => {
   if (!isAuthed(req)) return res.status(401).json({ error: "Unauthorized" });
