@@ -1,6 +1,7 @@
 
+
 const crypto = require("crypto");
-const { setAuthCookie } = require("./_lib/auth");
+const { setAuthCookie } = require("../_lib/auth");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
