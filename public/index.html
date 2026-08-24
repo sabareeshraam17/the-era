@@ -1,4 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE ERA — Men's Clothing</title><link rel="stylesheet" href="styles.css"></head><body><header class="nav"><div class="container nav-inner"><a class="logo" href="index.html">THE ERA</a><nav class="nav-links"><a href="#shop">Shop</a><a href="era.html">The Era</a><a href="order.html">Checkout</a><a href="my-orders.html">My Orders</a></nav><a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a></div></header><main><section class="hero container"><div class="hero-media"><img src="assets/hero.jpg" alt="THE NEW ERA collection campaign"></div></section><section class="section container" id="shop">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE ERA — Men's Clothing</title><link rel="stylesheet" href="styles.css"></head><body><header class="nav"><div class="container nav-inner"><a class="logo" href="index.html">THE ERA</a><nav class="nav-links"><a href="#shop">Shop</a><a href="era.html">The Era</a><a href="order.html">Checkout</a><a href="my-orders.html">My Orders</a></nav><a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a>
+<button class="mobile-menu-btn" aria-expanded="false" aria-label="Open menu" onclick="toggleMobileMenu(this)">☰</button>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#shop">Shop</a>
+  <a href="era.html">The Era</a>
+  <a href="order.html">Checkout</a>
+  <a href="my-orders.html">My Orders</a>
+</div>
+</div></header><main><section class="hero container"><div class="hero-media"><img src="assets/hero.jpg" alt="THE NEW ERA collection campaign"></div></section><section class="section container" id="shop">
 <div class="section-head"><div><div class="kicker">Men's collection / 01</div><h2>Elevated essentials.</h2></div>
 <p class="intro">Old-money restraint meets modern streetwear. Casual silhouettes, clean details, and pieces made to live in.</p></div>
 <div class="catalog-toolbar">
@@ -13,4 +21,19 @@
   </div>
 </div>
 <div class="grid" data-products></div>
-</section><section class="section container"><div class="about"><div><div class="kicker">The Era</div><h2>Never basic.<br>Always era.</h2></div><div><p>Old-world sophistication meets modern street culture.</p><a class="btn" href="era.html">Read our story</a></div></div></section></main><footer class="footer"><div class="container footer-inner"><span>© 2026 THE ERA</span><span>Men's casualwear · Old money × streetwear</span></div></footer><div class="toast"></div><script src="script.js"></script></body></html>
+</section><section class="section container"><div class="about"><div><div class="kicker">The Era</div><h2>Never basic.<br>Always era.</h2></div><div><p>Old-world sophistication meets modern street culture.</p><a class="btn" href="era.html">Read our story</a></div></div></section></main><footer class="footer"><div class="container footer-inner"><span>© 2026 THE ERA</span><span>Men's casualwear · Old money × streetwear</span></div></footer><div class="toast"></div><script src="script.js"></script>
+<script>
+function toggleMobileMenu(btn){
+  const m=document.getElementById("mobileMenu");
+  if(!m)return;
+  const open=!m.classList.contains("open");
+  m.classList.toggle("open",open);
+  btn.setAttribute("aria-expanded",String(open));
+}
+document.addEventListener("click",(e)=>{
+  const m=document.getElementById("mobileMenu"), b=document.querySelector(".mobile-menu-btn");
+  if(!m||!b||!m.classList.contains("open"))return;
+  if(!m.contains(e.target)&&!b.contains(e.target)){m.classList.remove("open");b.setAttribute("aria-expanded","false")}
+});
+</script>
+</body></html>

@@ -13,10 +13,18 @@
 .size-row{display:flex;gap:7px;flex-wrap:wrap}.size-option{min-width:42px;border:1px solid #ccc;background:#fff;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:850}.size-option.selected{background:#111;color:#fff;border-color:#111}
 .product-actions{display:flex;gap:10px;margin-top:24px}.product-actions .btn{flex:1}
 .detail-card{border-top:1px solid #ddd;margin-top:26px;padding-top:22px}
-@media(max-width:800px){.product-page{grid-template-columns:1fr}}
+@media(max-width:800px){.product-page{grid-template-columns:1fr}.product-gallery{border-radius:16px}.product-actions{flex-direction:column}.product-info{padding:0}}
 </style></head>
 <body>
-<header class="nav"><div class="container nav-inner"><a class="logo" href="index.html">THE ERA</a><nav class="nav-links"><a href="index.html#shop">Shop</a><a href="era.html">The Era</a><a href="order.html">Checkout</a><a href="my-orders.html">My Orders</a></nav><a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a></div></header>
+<header class="nav"><div class="container nav-inner"><a class="logo" href="index.html">THE ERA</a><nav class="nav-links"><a href="index.html#shop">Shop</a><a href="era.html">The Era</a><a href="order.html">Checkout</a><a href="my-orders.html">My Orders</a></nav><a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a>
+<button class="mobile-menu-btn" aria-expanded="false" aria-label="Open menu" onclick="toggleMobileMenu(this)">☰</button>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#shop">Shop</a>
+  <a href="era.html">The Era</a>
+  <a href="order.html">Checkout</a>
+  <a href="my-orders.html">My Orders</a>
+</div>
+</div></header>
 <main class="page container"><div id="productDetail"></div></main>
 <footer class="footer"><div class="container footer-inner"><span>© 2026 THE ERA</span><span>Men's casualwear · Old money × streetwear</span></div></footer><div class="toast"></div>
 <script src="script.js"></script><script>
@@ -39,4 +47,19 @@ document.getElementById("productDetail").innerHTML=`<div class="product-page">
 let chosen="M";document.querySelectorAll(".size-option").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".size-option").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");chosen=b.dataset.size}));document.getElementById("addBtn").onclick=()=>addDetail(p,chosen);
 document.querySelectorAll("[data-cart-count]").forEach(e=>e.textContent=getCart().reduce((s,i)=>s+i.qty,0));
 }
-</script></body></html>
+</script>
+<script>
+function toggleMobileMenu(btn){
+  const m=document.getElementById("mobileMenu");
+  if(!m)return;
+  const open=!m.classList.contains("open");
+  m.classList.toggle("open",open);
+  btn.setAttribute("aria-expanded",String(open));
+}
+document.addEventListener("click",(e)=>{
+  const m=document.getElementById("mobileMenu"), b=document.querySelector(".mobile-menu-btn");
+  if(!m||!b||!m.classList.contains("open"))return;
+  if(!m.contains(e.target)&&!b.contains(e.target)){m.classList.remove("open");b.setAttribute("aria-expanded","false")}
+});
+</script>
+</body></html>

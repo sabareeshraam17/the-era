@@ -147,5 +147,20 @@ document.getElementById("trackForm").addEventListener("submit", async e=>{
   }
 });
 </script>
+
+<script>
+function toggleMobileMenu(btn){
+  const m=document.getElementById("mobileMenu");
+  if(!m)return;
+  const open=!m.classList.contains("open");
+  m.classList.toggle("open",open);
+  btn.setAttribute("aria-expanded",String(open));
+}
+document.addEventListener("click",(e)=>{
+  const m=document.getElementById("mobileMenu"), b=document.querySelector(".mobile-menu-btn");
+  if(!m||!b||!m.classList.contains("open"))return;
+  if(!m.contains(e.target)&&!b.contains(e.target)){m.classList.remove("open");b.setAttribute("aria-expanded","false")}
+});
+</script>
 </body>
 </html>
