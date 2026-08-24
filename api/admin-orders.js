@@ -1,0 +1,62 @@
+
+const { ensureSchema } = require("../../lib/db");
+const { isAuthed } = require("../../lib/auth");
+
+module.exports = async (req, res) => {
+  if (!isAuthed(req)) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    const db = await ensureSchema();
+    const { search = "", date = "", status = "" } = req.query || {};
+    let rows;
+    if (status && date && search) {
+      const q = `%${search}%`;
+      rows = await db`SELECT * FROM orders WHERE status=${status} AND DATE(created_at)=${date}
+        AND (order_id ILIKE ${q} OR name ILIKE ${q} OR phone ILIKE ${q} OR email ILIKE ${q} OR items_json::text ILIKE ${q})
+        ORDER BY created_at DESC`;
+    } else if (status && date) {
+      rows = await db`SELECT * FROM orders WHERE status=${status} AND DATE(created_at)=${date} ORDER BY created_at DESC`;
+    } else if (status && search) {
+      const q = `%${search}%`;
+      rows = await db`SELECT * FROM orders WHERE status=${status}
+        AND (order_id ILIKE ${q} OR name ILIKE ${q} OR phone ILIKE ${q} OR email ILIKE ${q} OR items_json::text ILIKE ${q})
+        ORDER BY created_at DESC`;
+    } else if (date && search) {
+      const q = `%${search}%`;
+      rows = await db`SELECT * FROM orders WHERE DATE(created_at)=${date}
+        AND (order_id ILIKE ${q} OR name ILIKE ${q} OR phone ILIKE ${q} OR email ILIKE ${q} OR items_json::text ILIKE ${q})
+        ORDER BY created_at DESC`;
+    } else if (status) {
+      rows = await db`SELECT * FROM orders WHERE status=${status} ORDER BY created_at DESC`;
+    } else if (date) {
+      rows = await db`SELECT * FROM orders WHERE DATE(created_at)=${date} ORDER BY created_at DESC`;
+    } else if (search) {
+      const q = `%${search}%`;
+      rows = await db`SELECT * FROM orders
+        WHERE order_id ILIKE ${q} OR name ILIKE ${q} OR phone ILIKE ${q} OR email ILIKE ${q} OR items_json::text ILIKE ${q}
+        ORDER BY created_at DESC`;
+    } else {
+      rows = await db`SELECT * FROM orders ORDER BY created_at DESC`;
+    }
+
+    const statsRows = await db`
+      SELECT
+        COUNT(*)::int AS total,
+        COUNT(*) FILTER (WHERE status='NEW')::int AS new,
+        COUNT(*) FILTER (WHERE status='DELIVERED')::int AS delivered,
+        COALESCE(SUM(total) FILTER (WHERE status <> 'CANCELLED'),0)::int AS revenue
+      FROM orders
+    `;
+
+    res.json({
+      orders: rows.map(r => ({
+        orderId:r.order_id,name:r.name,phone:r.phone,email:r.email,address:r.address,
+        city:r.city,pin:r.pin,payment:r.payment,upiId:r.upi_id,
+        items:r.items_json,total:r.total,status:r.status,createdAt:r.created_at
+      })),
+      stats: statsRows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not load orders." });
+  }
+};

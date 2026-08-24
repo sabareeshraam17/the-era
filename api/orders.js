@@ -1,5 +1,5 @@
 
-const { ensureSchema } = require("./_lib/db");
+const { ensureSchema } = require("../lib/db");
 
 const PRODUCTS = {
   "baggy-combo": { name: "Baggy Combo", price: 1480 },
