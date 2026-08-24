@@ -1,5 +1,5 @@
 
-const { ensureSchema } = require("../../lib/db");
+const { ensureSchema } = require("../lib/db");
 const { isAuthed } = require("../../lib/auth");
 
 module.exports = async (req, res) => {
