@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Product — THE ERA</title><link rel="stylesheet" href="styles.css">
+<style>
+.product-page{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start}
+.product-gallery{background:#f2f2f2;border-radius:24px;overflow:hidden}
+.product-gallery img{width:100%;display:block}
+.product-info{padding:8px 0}
+.product-info h1{font-size:clamp(38px,5vw,62px);line-height:.95;letter-spacing:-.05em;margin:10px 0}
+.product-price{font-size:26px;font-weight:900;margin:16px 0}
+.product-copy{color:#666;line-height:1.75}
+.select-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:24px 0 8px}
+.size-row{display:flex;gap:7px;flex-wrap:wrap}.size-option{min-width:42px;border:1px solid #ccc;background:#fff;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:850}.size-option.selected{background:#111;color:#fff;border-color:#111}
+.product-actions{display:flex;gap:10px;margin-top:24px}.product-actions .btn{flex:1}
+.detail-card{border-top:1px solid #ddd;margin-top:26px;padding-top:22px}
+@media(max-width:800px){.product-page{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header class="nav"><div class="container nav-inner"><a class="logo" href="index.html">THE ERA</a><nav class="nav-links"><a href="index.html#shop">Shop</a><a href="era.html">The Era</a><a href="order.html">Checkout</a><a href="my-orders.html">My Orders</a></nav><a class="cart-btn" href="order.html">Cart <span class="cart-count" data-cart-count>0</span></a></div></header>
+<main class="page container"><div id="productDetail"></div></main>
+<footer class="footer"><div class="container footer-inner"><span>© 2026 THE ERA</span><span>Men's casualwear · Old money × streetwear</span></div></footer><div class="toast"></div>
+<script src="script.js"></script><script>
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function getCart(){try{return JSON.parse(localStorage.getItem("theEraCart"))||[]}catch{return[]}}
+function saveCart(c){localStorage.setItem("theEraCart",JSON.stringify(c));document.querySelectorAll("[data-cart-count]").forEach(e=>e.textContent=c.reduce((s,i)=>s+i.qty,0))}
+function toast(m){const t=document.querySelector(".toast");if(!t)return;t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+function addDetail(p,size){const c=getCart(),i=c.find(x=>x.id===p.id&&x.size===size);if(i)i.qty++;else c.push({id:p.id,qty:1,size});saveCart(c);toast(`${p.name} · ${size} added to cart`)}
+const id=new URLSearchParams(location.search).get("id");
+const p=PRODUCTS.find(x=>x.id===id);
+if(!p){document.getElementById("productDetail").innerHTML='<div class="empty">Product not found.<br><br><a class="btn" href="index.html#shop">Back to shop</a></div>'}
+else{
+document.title=p.name+" — THE ERA";
+document.getElementById("productDetail").innerHTML=`<div class="product-page">
+<div class="product-gallery"><img src="${p.image}" alt="${p.name}"></div>
+<div class="product-info"><div class="kicker">${p.category} / ${p.tag}</div><h1>${p.name}</h1><div class="product-price">${money(p.price)}</div>
+<p class="product-copy">A refined THE ERA staple designed around an elevated old-money × streetwear wardrobe. Built for everyday rotation, effortless layering and clean styling.</p>
+<div class="detail-card"><div class="select-label">Size</div><div class="size-row" id="sizes">${p.sizes.map(s=>`<button class="size-option ${s==="M"?"selected":""}" data-size="${s}">${s}</button>`).join("")}</div><div class="select-label">Colour</div><div class="product-copy">${p.color}</div>
+<div class="product-actions"><button class="btn" id="addBtn">Add to cart</button><a class="btn alt" href="order.html">Go to cart</a></div></div></div></div>`;
+let chosen="M";document.querySelectorAll(".size-option").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".size-option").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");chosen=b.dataset.size}));document.getElementById("addBtn").onclick=()=>addDetail(p,chosen);
+document.querySelectorAll("[data-cart-count]").forEach(e=>e.textContent=getCart().reduce((s,i)=>s+i.qty,0));
+}
+</script></body></html>

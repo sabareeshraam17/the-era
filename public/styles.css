@@ -14,3 +14,5 @@
 .size-option{min-width:36px;border:1px solid #ccc;background:#fff;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:850}
 .size-option.selected{background:#111;color:#fff;border-color:#111}
 @media(max-width:520px){.catalog-toolbar{align-items:flex-start;flex-direction:column}}
+
+.product-clickable{cursor:pointer}.product-clickable:hover .card-image img{transform:scale(1.02)}.card-image img{transition:transform .25s ease}.compact-sizes{margin-top:8px}
